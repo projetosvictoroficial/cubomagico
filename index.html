@@ -23,7 +23,7 @@
     --grid: rgba(255,255,255,0.04);
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
+  html{scroll-behavior:smooth;overflow-x:hidden}
   body{
     background:var(--bg);
     color:var(--ink);
@@ -198,7 +198,7 @@
   .cube-stage::before{
     content:"";
     position:absolute;
-    width:400px;height:400px;
+    width:min(400px,90vw);height:min(400px,90vw);
     border-radius:50%;
     background:radial-gradient(circle, var(--accent) 0%, transparent 60%);
     opacity:0.15;
@@ -269,7 +269,7 @@
   /* ============ MOVES ============ */
   .moves-grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));
     gap:20px;
   }
   .move-card{
@@ -781,6 +781,20 @@
     .demo-arrow{transform:rotate(90deg);font-size:24px}
     .demo-3d{width:120px;height:120px}
     .demo-cube-stage{height:140px;width:140px}
+  }
+
+  @media (max-width:480px){
+    .hero-text h1{font-size:clamp(36px,12vw,64px)}
+    .notation-grid{grid-template-columns:1fr 1fr}
+    .color-strip{grid-template-columns:repeat(3,1fr)}
+    .step{grid-template-columns:40px 1fr auto;gap:12px;padding:20px 0}
+    .step-num{font-size:32px}
+    .step-content h3{font-size:17px}
+    .tutorial{padding:16px}
+    .algo-player{padding:16px;gap:16px}
+    .step-demo{padding:14px;gap:10px}
+    .move-cube-stage{height:160px}
+    footer{padding:40px 20px 30px}
   }
 </style>
 </head>
