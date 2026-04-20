@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CUBO · Aprenda a Montar o 3x3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0f;
+    --bg-2:#12121a;
+    --ink:#f4f1e8;
+    --ink-dim:#8a8595;
+    --red:#ff2e4c;
+    --blue:#1e5fff;
+    --yellow:#ffd60a;
+    --green:#00d26a;
+    --orange:#ff6b1a;
+    --white:#f4f1e8;
+    --accent:#ff2e4c;
+    --grid: rgba(255,255,255,0.04);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Space Mono',monospace;
+    overflow-x:hidden;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size:40px 40px;
+  }
+  ::selection{background:var(--accent);color:var(--bg)}
+
+  nav{
+    position:fixed;top:0;left:0;right:0;
+    z-index:100;
+    padding:20px 40px;
+    display:flex;justify-content:space-between;align-items:center;
+    backdrop-filter:blur(12px);
+    background:rgba(10,10,15,0.6);
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .logo{
+    font-family:'Syne',sans-serif;
+    font-weight:800;
+    font-size:22px;
+    letter-spacing:-0.02em;
+    display:flex;align-items:center;gap:10px;
+  }
+  .logo-sq{
+    display:inline-grid;
+    grid-template-columns:repeat(3,6px);
+    grid-template-rows:repeat(3,6px);
+    gap:2px;
+  }
+  .logo-sq span{background:var(--ink);border-radius:1px}
+  .logo-sq span:nth-child(1){background:var(--red)}
+  .logo-sq span:nth-child(3){background:var(--yellow)}
+  .logo-sq span:nth-child(5){background:var(--green)}
+  .logo-sq span:nth-child(7){background:var(--blue)}
+  .logo-sq span:nth-child(9){background:var(--orange)}
+  nav ul{list-style:none;display:flex;gap:28px;font-size:13px;text-transform:uppercase;letter-spacing:0.1em}
+  nav a{color:var(--ink-dim);text-decoration:none;transition:color 0.2s}
+  nav a:hover{color:var(--ink)}
+
+  .hero{
+    min-height:100vh;
+    display:grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items:center;
+    padding:120px 40px 80px;
+    gap:40px;
+    position:relative;
+  }
+  .hero-text h1{
+    font-family:'Syne',sans-serif;
+    font-weight:800;
+    font-size:clamp(48px, 8vw, 120px);
+    line-height:0.9;
+    letter-spacing:-0.04em;
+    margin-bottom:30px;
+  }
+  .hero-text h1 .line{display:block;overflow:hidden}
+  .hero-text h1 .line span{
+    display:inline-block;
+    animation: slideUp 0.8s cubic-bezier(.22,1,.36,1) backwards;
+  }
+  .hero-text h1 .line:nth-child(1) span{animation-delay:0.1s}
+  .hero-text h1 .line:nth-child(2) span{animation-delay:0.25s;color:var(--accent)}
+  .hero-text h1 .line:nth-child(3) span{animation-delay:0.4s}
+  @keyframes slideUp{
+    from{transform:translateY(100%);opacity:0}
+    to{transform:translateY(0);opacity:1}
+  }
+  .hero-tag{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:8px 14px;
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:100px;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.15em;
+    color:var(--ink-dim);
+    margin-bottom:30px;
+  }
+  .hero-tag::before{
+    content:"";
+    width:6px;height:6px;border-radius:50%;
+    background:var(--green);
+    box-shadow:0 0 10px var(--green);
+    animation:pulse 2s infinite;
+  }
+  @keyframes pulse{50%{opacity:0.3}}
+  .hero-desc{
+    font-size:17px;
+    line-height:1.6;
+    color:var(--ink-dim);
+    max-width:460px;
+    margin-bottom:40px;
+  }
+  .cta-row{display:flex;gap:16px;flex-wrap:wrap}
+  .btn{
+    padding:16px 32px;
+    font-family:'Space Mono',monospace;
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:0.15em;
+    border:none;cursor:pointer;
+    text-decoration:none;
+    display:inline-flex;align-items:center;gap:10px;
+    transition:all 0.3s;
+    border-radius:2px;
+  }
+  .btn-primary{
+    background:var(--accent);
+    color:var(--bg);
+    font-weight:700;
+  }
+  .btn-primary:hover{
+    transform:translate(-3px,-3px);
+    box-shadow:6px 6px 0 var(--ink);
+  }
+  .btn-secondary{
+    background:transparent;
+    color:var(--ink);
+    border:1px solid rgba(255,255,255,0.2);
+  }
+  .btn-secondary:hover{border-color:var(--ink)}
+  .btn .arrow{transition:transform 0.3s}
+  .btn:hover .arrow{transform:translateX(4px)}
+
+  .cube-stage{
+    position:relative;
+    display:flex;align-items:center;justify-content:center;
+    perspective:1200px;
+    min-height:500px;
+  }
+  .cube-hero{
+    position:relative;
+    width:240px;height:240px;
+    transform-style:preserve-3d;
+    animation:rotateCube 18s infinite linear;
+  }
+  @keyframes rotateCube{
+    0%{transform:rotateX(-25deg) rotateY(0deg)}
+    100%{transform:rotateX(-25deg) rotateY(360deg)}
+  }
+  .cube-hero .face{
+    position:absolute;
+    width:240px;height:240px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    grid-template-rows:repeat(3,1fr);
+    gap:4px;
+    padding:4px;
+    background:#0a0a0f;
+    border-radius:10px;
+  }
+  .cube-hero .sticker{border-radius:6px;box-shadow:inset 0 0 0 1px rgba(0,0,0,0.3)}
+  .cube-hero .face.front{transform:translateZ(120px)}
+  .cube-hero .face.back{transform:rotateY(180deg) translateZ(120px)}
+  .cube-hero .face.right{transform:rotateY(90deg) translateZ(120px)}
+  .cube-hero .face.left{transform:rotateY(-90deg) translateZ(120px)}
+  .cube-hero .face.top{transform:rotateX(90deg) translateZ(120px)}
+  .cube-hero .face.bottom{transform:rotateX(-90deg) translateZ(120px)}
+  .r{background:var(--red)}
+  .b{background:var(--blue)}
+  .y{background:var(--yellow)}
+  .g{background:var(--green)}
+  .o{background:var(--orange)}
+  .w{background:var(--white)}
+
+  .cube-stage::before{
+    content:"";
+    position:absolute;
+    width:400px;height:400px;
+    border-radius:50%;
+    background:radial-gradient(circle, var(--accent) 0%, transparent 60%);
+    opacity:0.15;
+    filter:blur(40px);
+    z-index:-1;
+  }
+
+  .section{
+    padding:100px 40px;
+    max-width:1400px;
+    margin:0 auto;
+  }
+  .section-num{
+    font-family:'Space Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.2em;
+    color:var(--accent);
+    margin-bottom:16px;
+    text-transform:uppercase;
+  }
+  .section-title{
+    font-family:'Syne',sans-serif;
+    font-weight:700;
+    font-size:clamp(36px,5vw,64px);
+    line-height:1;
+    letter-spacing:-0.03em;
+    margin-bottom:24px;
+    max-width:900px;
+  }
+  .section-desc{
+    font-size:16px;
+    line-height:1.7;
+    color:var(--ink-dim);
+    max-width:600px;
+    margin-bottom:60px;
+  }
+
+  .notation-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:2px;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.06);
+  }
+  .notation-card{
+    background:var(--bg-2);
+    padding:32px 24px;
+    transition:background 0.3s;
+  }
+  .notation-card:hover{background:#1a1a26}
+  .nota-letter{
+    font-family:'Syne',sans-serif;
+    font-weight:800;
+    font-size:56px;
+    line-height:1;
+    color:var(--accent);
+    margin-bottom:12px;
+  }
+  .nota-name{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.15em;
+    color:var(--ink-dim);
+    margin-bottom:8px;
+  }
+  .nota-desc{font-size:14px;line-height:1.5}
+
+  /* ============ MOVES ============ */
+  .moves-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:20px;
+  }
+  .move-card{
+    background:var(--bg-2);
+    border:1px solid rgba(255,255,255,0.06);
+    padding:24px;
+    transition:all 0.3s;
+  }
+  .move-card:hover{
+    border-color:var(--accent);
+    transform:translateY(-4px);
+  }
+  .move-header{
+    display:flex;justify-content:space-between;align-items:baseline;
+    margin-bottom:20px;
+  }
+  .move-letter{
+    font-family:'Syne',sans-serif;
+    font-weight:800;
+    font-size:44px;
+    line-height:1;
+    color:var(--accent);
+    letter-spacing:-0.02em;
+  }
+  .move-name{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.15em;
+    color:var(--ink-dim);
+  }
+  .move-cube-stage{
+    perspective:700px;
+    height:200px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:16px;
+    position:relative;
+  }
+  .move-desc{
+    font-size:13px;
+    color:var(--ink-dim);
+    line-height:1.5;
+    margin-bottom:12px;
+    min-height:40px;
+  }
+  .replay-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:none;
+    border:1px solid rgba(255,255,255,0.15);
+    color:var(--ink);
+    padding:8px 14px;
+    font-family:'Space Mono',monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.12em;
+    cursor:pointer;
+    transition:all 0.2s;
+    border-radius:2px;
+  }
+  .replay-btn:hover{
+    border-color:var(--accent);
+    color:var(--accent);
+  }
+
+  .mini-cube{
+    position:relative;
+    width:120px;height:120px;
+    transform-style:preserve-3d;
+    transform:rotateX(-22deg) rotateY(-32deg);
+  }
+  .cubie{
+    position:absolute;
+    width:40px;height:40px;
+    transform-style:preserve-3d;
+  }
+  .cubie .cf{
+    position:absolute;
+    width:40px;height:40px;
+    background:#0a0a0f;
+    border:1px solid rgba(0,0,0,0.4);
+  }
+  .cubie .cf.sticker-on{
+    box-shadow:inset 0 0 0 2px #0a0a0f;
+    border-radius:4px;
+  }
+  .cubie .cf.f{transform:translateZ(20px)}
+  .cubie .cf.bk{transform:rotateY(180deg) translateZ(20px)}
+  .cubie .cf.rt{transform:rotateY(90deg) translateZ(20px)}
+  .cubie .cf.lt{transform:rotateY(-90deg) translateZ(20px)}
+  .cubie .cf.tp{transform:rotateX(90deg) translateZ(20px)}
+  .cubie .cf.bt{transform:rotateX(-90deg) translateZ(20px)}
+
+  .layer{
+    position:absolute;
+    inset:0;
+    width:120px;height:120px;
+    transform-style:preserve-3d;
+  }
+
+  @keyframes rotR { 0%,12%{transform:rotateX(0)} 50%,100%{transform:rotateX(-90deg)} }
+  @keyframes rotRp{ 0%,12%{transform:rotateX(0)} 50%,100%{transform:rotateX(90deg)} }
+  @keyframes rotL { 0%,12%{transform:rotateX(0)} 50%,100%{transform:rotateX(90deg)} }
+  @keyframes rotLp{ 0%,12%{transform:rotateX(0)} 50%,100%{transform:rotateX(-90deg)} }
+  @keyframes rotU { 0%,12%{transform:rotateY(0)} 50%,100%{transform:rotateY(-90deg)} }
+  @keyframes rotUp{ 0%,12%{transform:rotateY(0)} 50%,100%{transform:rotateY(90deg)} }
+  @keyframes rotD { 0%,12%{transform:rotateY(0)} 50%,100%{transform:rotateY(90deg)} }
+  @keyframes rotDp{ 0%,12%{transform:rotateY(0)} 50%,100%{transform:rotateY(-90deg)} }
+  @keyframes rotF { 0%,12%{transform:rotateZ(0)} 50%,100%{transform:rotateZ(-90deg)} }
+  @keyframes rotFp{ 0%,12%{transform:rotateZ(0)} 50%,100%{transform:rotateZ(90deg)} }
+  @keyframes rotB { 0%,12%{transform:rotateZ(0)} 50%,100%{transform:rotateZ(90deg)} }
+  @keyframes rotBp{ 0%,12%{transform:rotateZ(0)} 50%,100%{transform:rotateZ(-90deg)} }
+
+  .anim-R  .layer-R  { animation: rotR  2.8s cubic-bezier(.65,.05,.36,1) infinite; }
+  .anim-Rp .layer-R  { animation: rotRp 2.8s cubic-bezier(.65,.05,.36,1) infinite; }
+  .anim-L  .layer-L  { animation: rotL  2.8s cubic-bezier(.65,.05,.36,1) infinite; }
+  .anim-Lp .layer-L  { animation: rotLp 2.8s cubic-bezier(.65,.05,.36,1) infinite; }
+  .anim-U  .layer-U  { animation: rotU  2.8s cubic-bezier(.65,.05,.36,1) infinite; }
+  .anim-Up .layer-U  { animation: rotUp 2.8s cubic-bezier(.65,.05,.36,1) infinite; }
+  .anim-D  .layer-D  { animation: rotD  2.8s cubic-bezier(.65,.05,.36,1) infinite; }
+  .anim-Dp .layer-D  { animation: rotDp 2.8s cubic-bezier(.65,.05,.36,1) infinite; }
+  .anim-F  .layer-F  { animation: rotF  2.8s cubic-bezier(.65,.05,.36,1) infinite; }
+  .anim-Fp .layer-F  { animation: rotFp 2.8s cubic-bezier(.65,.05,.36,1) infinite; }
+  .anim-B  .layer-B  { animation: rotB  2.8s cubic-bezier(.65,.05,.36,1) infinite; }
+  .anim-Bp .layer-B  { animation: rotBp 2.8s cubic-bezier(.65,.05,.36,1) infinite; }
+
+  /* ============ STEPS ============ */
+  .steps{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+  }
+  .step{
+    display:grid;
+    grid-template-columns:80px 1fr auto;
+    gap:40px;
+    padding:40px 0;
+    border-top:1px solid rgba(255,255,255,0.08);
+    align-items:center;
+    cursor:pointer;
+    transition:padding 0.3s;
+  }
+  .step:hover{padding-left:20px}
+  .step:last-child{border-bottom:1px solid rgba(255,255,255,0.08)}
+  .step-num{
+    font-family:'Syne',sans-serif;
+    font-weight:800;
+    font-size:64px;
+    line-height:1;
+    color:var(--ink);
+    letter-spacing:-0.04em;
+  }
+  .step:hover .step-num{color:var(--accent)}
+  .step-content h3{
+    font-family:'Syne',sans-serif;
+    font-weight:700;
+    font-size:28px;
+    margin-bottom:8px;
+    letter-spacing:-0.02em;
+  }
+  .step-content p{color:var(--ink-dim);font-size:14px;line-height:1.6;max-width:500px}
+  .step-arrow{
+    font-size:24px;
+    color:var(--ink-dim);
+    transition:all 0.3s;
+  }
+  .step:hover .step-arrow{color:var(--accent);transform:translateX(8px)}
+
+  .tutorial{
+    background:var(--bg-2);
+    border:1px solid rgba(255,255,255,0.08);
+    padding:40px;
+    margin-top:40px;
+    display:none;
+    border-left:3px solid var(--accent);
+  }
+  .tutorial.active{display:block;animation:fadeIn 0.4s}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .tut-header{
+    display:flex;justify-content:space-between;align-items:start;
+    margin-bottom:24px;
+    padding-bottom:20px;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .tut-title{
+    font-family:'Syne',sans-serif;
+    font-weight:700;
+    font-size:24px;
+    letter-spacing:-0.02em;
+  }
+  .tut-close{
+    background:none;border:1px solid rgba(255,255,255,0.2);
+    color:var(--ink);
+    width:36px;height:36px;
+    cursor:pointer;
+    font-size:18px;
+    border-radius:50%;
+  }
+  .tut-close:hover{border-color:var(--accent);color:var(--accent)}
+  .tut-body h4{
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:0.15em;
+    color:var(--accent);
+    margin:24px 0 12px;
+  }
+  .tut-body p{
+    color:var(--ink-dim);
+    line-height:1.7;
+    font-size:15px;
+    margin-bottom:12px;
+  }
+  .algo{
+    display:inline-block;
+    background:#000;
+    padding:10px 16px;
+    border:1px solid var(--accent);
+    font-family:'Space Mono',monospace;
+    font-weight:700;
+    font-size:16px;
+    letter-spacing:0.1em;
+    color:var(--yellow);
+    margin:8px 8px 8px 0;
+    border-radius:2px;
+    cursor:pointer;
+    transition:all 0.2s;
+    user-select:none;
+  }
+  .algo:hover{background:#1a1a00;transform:translateY(-1px)}
+  .algo::after{content:" ▶";font-size:10px;opacity:0.6;margin-left:4px}
+  .tut-body ul{list-style:none;padding:0}
+  .tut-body ul li{
+    padding:10px 0 10px 28px;
+    position:relative;
+    color:var(--ink-dim);
+    line-height:1.6;
+  }
+  .tut-body ul li::before{
+    content:"→";
+    position:absolute;
+    left:0;
+    color:var(--accent);
+    font-weight:700;
+  }
+  .tip{
+    background:rgba(255,214,10,0.08);
+    border-left:3px solid var(--yellow);
+    padding:16px 20px;
+    margin:20px 0;
+    font-size:14px;
+    line-height:1.6;
+  }
+  .tip strong{color:var(--yellow)}
+
+  /* ============ STEP DEMO (antes/depois visual de cada passo) ============ */
+  .step-demo{
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    gap:30px;
+    align-items:center;
+    background:#000;
+    border:1px solid rgba(255,255,255,0.08);
+    padding:30px;
+    margin:8px 0 28px;
+  }
+  .demo-side{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+  }
+  .demo-label{
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.2em;
+    color:var(--ink-dim);
+  }
+  .demo-label.after-label{color:var(--green)}
+  .demo-cube-stage{
+    perspective:600px;
+    width:140px;
+    height:140px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .demo-arrow{
+    font-family:'Syne',sans-serif;
+    font-weight:800;
+    font-size:32px;
+    color:var(--accent);
+    animation:arrowPulse 1.6s infinite;
+  }
+  @keyframes arrowPulse{
+    0%,100%{transform:translateX(0);opacity:0.6}
+    50%{transform:translateX(4px);opacity:1}
+  }
+  /* Mini flat cube 2D para os demos - mais leve que 3D */
+  .flat-cube{
+    display:grid;
+    grid-template-areas:
+      ". top . ."
+      "left front right back"
+      ". bottom . .";
+    gap:4px;
+  }
+  .flat-face{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    grid-template-rows:repeat(3,1fr);
+    gap:2px;
+    padding:2px;
+    background:#0a0a0f;
+    border-radius:2px;
+  }
+  .flat-face.top{grid-area:top}
+  .flat-face.left{grid-area:left}
+  .flat-face.front{grid-area:front}
+  .flat-face.right{grid-area:right}
+  .flat-face.back{grid-area:back}
+  .flat-face.bottom{grid-area:bottom}
+  .flat-sticker{
+    width:12px;height:12px;
+    background:#333;
+    border-radius:1px;
+  }
+  .flat-sticker.w{background:var(--white)}
+  .flat-sticker.y{background:var(--yellow)}
+  .flat-sticker.r{background:var(--red)}
+  .flat-sticker.o{background:var(--orange)}
+  .flat-sticker.g{background:var(--green)}
+  .flat-sticker.b{background:var(--blue)}
+  .flat-sticker.gray{background:#2a2a35}
+
+  /* 3D demo cube — mostra cubo em perspectiva, populado por JS com .cubie filhos */
+  .demo-3d{
+    position:relative;
+    width:120px;height:120px;
+    transform-style:preserve-3d;
+    transform:rotateX(-22deg) rotateY(-32deg);
+    animation:demoRotate 20s infinite linear;
+  }
+  .demo-cube-stage:hover .demo-3d{animation-play-state:paused}
+  @keyframes demoRotate{
+    0%{transform:rotateX(-22deg) rotateY(-32deg)}
+    100%{transform:rotateX(-22deg) rotateY(328deg)}
+  }
+
+  .demo-caption{
+    grid-column:1/-1;
+    text-align:center;
+    font-size:13px;
+    color:var(--ink-dim);
+    margin-top:10px;
+    font-style:italic;
+    line-height:1.5;
+  }
+
+  /* ============ ALGO PLAYER ============ */
+  .algo-player{
+    background:#000;
+    border:1px solid var(--accent);
+    padding:30px;
+    margin:16px 0 24px 0;
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:30px;
+    align-items:center;
+  }
+  .algo-player-stage{
+    perspective:800px;
+    width:140px;height:140px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .algo-player-controls{
+    display:flex;flex-direction:column;gap:14px;
+  }
+  .algo-player-label{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.2em;
+    color:var(--ink-dim);
+  }
+  .algo-seq{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .algo-move{
+    padding:6px 10px;
+    background:#0a0a0f;
+    border:1px solid rgba(255,255,255,0.1);
+    font-family:'Space Mono',monospace;
+    font-weight:700;
+    font-size:13px;
+    color:var(--ink-dim);
+    border-radius:2px;
+    transition:all 0.2s;
+  }
+  .algo-move.active{
+    background:var(--accent);
+    color:#000;
+    border-color:var(--accent);
+    transform:scale(1.15);
+  }
+  .algo-move.done{
+    color:var(--green);
+    border-color:rgba(0,210,106,0.3);
+  }
+  .algo-buttons{display:flex;gap:10px;align-items:center}
+  .algo-play{
+    background:var(--accent);
+    color:#000;
+    border:none;
+    padding:10px 20px;
+    font-family:'Space Mono',monospace;
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.15em;
+    cursor:pointer;
+    border-radius:2px;
+  }
+  .algo-play:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+  .algo-play:disabled{opacity:0.4;cursor:wait;transform:none;box-shadow:none}
+  .algo-close{
+    background:none;
+    border:1px solid rgba(255,255,255,0.2);
+    color:var(--ink-dim);
+    width:32px;height:32px;
+    cursor:pointer;
+    border-radius:50%;
+    font-size:14px;
+  }
+  .algo-close:hover{border-color:var(--accent);color:var(--accent)}
+
+  .color-strip{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:2px;
+    margin-top:40px;
+  }
+  .color-block{
+    aspect-ratio:1;
+    display:flex;
+    align-items:flex-end;
+    padding:16px;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    font-weight:700;
+    border-radius:4px;
+  }
+  .color-block.c-w{background:var(--white);color:#000}
+  .color-block.c-y{background:var(--yellow);color:#000}
+  .color-block.c-r{background:var(--red);color:#fff}
+  .color-block.c-o{background:var(--orange);color:#fff}
+  .color-block.c-g{background:var(--green);color:#000}
+  .color-block.c-b{background:var(--blue);color:#fff}
+
+  footer{
+    padding:60px 40px 40px;
+    text-align:center;
+    color:var(--ink-dim);
+    font-size:13px;
+    border-top:1px solid rgba(255,255,255,0.06);
+    margin-top:80px;
+  }
+  footer p{margin-bottom:8px}
+  footer .big{
+    font-family:'Syne',sans-serif;
+    font-weight:800;
+    font-size:clamp(60px,12vw,160px);
+    color:var(--ink);
+    letter-spacing:-0.05em;
+    line-height:1;
+    margin-bottom:40px;
+    background:linear-gradient(180deg, var(--ink) 0%, transparent 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+
+  @media (max-width:900px){
+    nav{padding:16px 20px}
+    nav ul{display:none}
+    .hero{grid-template-columns:1fr;padding:100px 20px 40px;gap:40px}
+    .cube-stage{min-height:350px}
+    .cube-hero,.cube-hero .face{width:180px;height:180px}
+    .cube-hero .face.front{transform:translateZ(90px)}
+    .cube-hero .face.back{transform:rotateY(180deg) translateZ(90px)}
+    .cube-hero .face.right{transform:rotateY(90deg) translateZ(90px)}
+    .cube-hero .face.left{transform:rotateY(-90deg) translateZ(90px)}
+    .cube-hero .face.top{transform:rotateX(90deg) translateZ(90px)}
+    .cube-hero .face.bottom{transform:rotateX(-90deg) translateZ(90px)}
+    .section{padding:60px 20px}
+    .step{grid-template-columns:50px 1fr auto;gap:20px;padding:28px 0}
+    .step-num{font-size:40px}
+    .step-content h3{font-size:20px}
+    .color-strip{grid-template-columns:repeat(3,1fr)}
+    .tutorial{padding:24px}
+    .algo-player{grid-template-columns:1fr;padding:20px}
+    .algo-player-stage{margin:0 auto}
+    .step-demo{grid-template-columns:1fr;gap:14px;padding:20px}
+    .demo-arrow{transform:rotate(90deg);font-size:24px}
+    .demo-3d{width:120px;height:120px}
+    .demo-cube-stage{height:140px;width:140px}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">
+    <span class="logo-sq">
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span>
+    </span>
+    CUBO/3×3
+  </div>
+  <ul>
+    <li><a href="#basico">Básico</a></li>
+    <li><a href="#notacao">Movimentos</a></li>
+    <li><a href="#passos">Passos</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-tag">TUTORIAL INTERATIVO · MÉTODO INICIANTE</div>
+    <h1>
+      <span class="line"><span>Qualquer um</span></span>
+      <span class="line"><span>pode montar</span></span>
+      <span class="line"><span>um cubo mágico.</span></span>
+    </h1>
+    <p class="hero-desc">
+      Aprenda a resolver o 3x3 em 7 passos simples, com movimentos animados em 3D.
+      Clique em qualquer algoritmo pra ver ele executar na sua frente.
+    </p>
+    <div class="cta-row">
+      <a href="#basico" class="btn btn-primary">
+        COMEÇAR AGORA <span class="arrow">→</span>
+      </a>
+      <a href="#notacao" class="btn btn-secondary">
+        VER MOVIMENTOS
+      </a>
+    </div>
+  </div>
+  <div class="cube-stage">
+    <div class="cube-hero">
+      <div class="face front">
+        <div class="sticker r"></div><div class="sticker r"></div><div class="sticker r"></div>
+        <div class="sticker r"></div><div class="sticker r"></div><div class="sticker r"></div>
+        <div class="sticker r"></div><div class="sticker r"></div><div class="sticker r"></div>
+      </div>
+      <div class="face back">
+        <div class="sticker o"></div><div class="sticker o"></div><div class="sticker o"></div>
+        <div class="sticker o"></div><div class="sticker o"></div><div class="sticker o"></div>
+        <div class="sticker o"></div><div class="sticker o"></div><div class="sticker o"></div>
+      </div>
+      <div class="face right">
+        <div class="sticker g"></div><div class="sticker g"></div><div class="sticker g"></div>
+        <div class="sticker g"></div><div class="sticker g"></div><div class="sticker g"></div>
+        <div class="sticker g"></div><div class="sticker g"></div><div class="sticker g"></div>
+      </div>
+      <div class="face left">
+        <div class="sticker b"></div><div class="sticker b"></div><div class="sticker b"></div>
+        <div class="sticker b"></div><div class="sticker b"></div><div class="sticker b"></div>
+        <div class="sticker b"></div><div class="sticker b"></div><div class="sticker b"></div>
+      </div>
+      <div class="face top">
+        <div class="sticker w"></div><div class="sticker w"></div><div class="sticker w"></div>
+        <div class="sticker w"></div><div class="sticker w"></div><div class="sticker w"></div>
+        <div class="sticker w"></div><div class="sticker w"></div><div class="sticker w"></div>
+      </div>
+      <div class="face bottom">
+        <div class="sticker y"></div><div class="sticker y"></div><div class="sticker y"></div>
+        <div class="sticker y"></div><div class="sticker y"></div><div class="sticker y"></div>
+        <div class="sticker y"></div><div class="sticker y"></div><div class="sticker y"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="basico">
+  <div class="section-num">01 // FUNDAMENTOS</div>
+  <h2 class="section-title">Antes de começar, entenda a anatomia do cubo.</h2>
+  <p class="section-desc">
+    O 3x3 tem 26 peças visíveis divididas em três tipos. O segredo que ninguém conta: os centros não se mexem. Cada cor tem um lugar fixo — branco sempre oposto ao amarelo, vermelho oposto ao laranja, azul oposto ao verde.
+  </p>
+
+  <div class="notation-grid">
+    <div class="notation-card">
+      <div class="nota-letter">6</div>
+      <div class="nota-name">Centros</div>
+      <div class="nota-desc">Uma cor só. São fixos e definem a cor de cada face.</div>
+    </div>
+    <div class="notation-card">
+      <div class="nota-letter">12</div>
+      <div class="nota-name">Meios</div>
+      <div class="nota-desc">Peças com 2 cores. Ficam entre dois centros.</div>
+    </div>
+    <div class="notation-card">
+      <div class="nota-letter">8</div>
+      <div class="nota-name">Quinas</div>
+      <div class="nota-desc">Peças com 3 cores. Ficam nos cantos.</div>
+    </div>
+    <div class="notation-card">
+      <div class="nota-letter">∞</div>
+      <div class="nota-name">Combinações</div>
+      <div class="nota-desc">43 quintilhões. Mas só precisa de 1 caminho.</div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Syne';font-weight:700;font-size:22px;margin:60px 0 20px;letter-spacing:-0.02em;">Cores opostas (sempre):</h3>
+  <div class="color-strip">
+    <div class="color-block c-w">Branco</div>
+    <div class="color-block c-y">Amarelo</div>
+    <div class="color-block c-r">Vermelho</div>
+    <div class="color-block c-o">Laranja</div>
+    <div class="color-block c-g">Verde</div>
+    <div class="color-block c-b">Azul</div>
+  </div>
+</section>
+
+<section class="section" id="notacao">
+  <div class="section-num">02 // LINGUAGEM VISUAL</div>
+  <h2 class="section-title">Os 12 movimentos, animados em 3D.</h2>
+  <p class="section-desc">
+    Cada letra representa uma face do cubo. Sozinha gira 90° horário. Com apóstrofo (R') gira anti-horário. Observe as animações — depois de uns 30 segundos olhando, você já sabe de cor.
+  </p>
+
+  <div class="moves-grid" id="movesGrid"></div>
+
+  <div class="tip" style="margin-top:40px">
+    <strong>Atenção ao "horário":</strong> sempre olhe diretamente pra face que vai girar. A face U (topo) gira horário quando vista de cima. A face D (base) gira horário quando vista de baixo. É a perspectiva DAQUELA face, não do cubo inteiro.
+  </div>
+</section>
+
+<section class="section" id="passos">
+  <div class="section-num">03 // O MÉTODO</div>
+  <h2 class="section-title">Sete passos. Do zero à vitória.</h2>
+  <p class="section-desc">
+    Clique em cada passo para abrir o tutorial. Dentro, clique nos algoritmos em amarelo para ver cada um executar em tempo real num mini-cubo 3D.
+  </p>
+
+  <div class="steps">
+    <div class="step" onclick="openTut(1)">
+      <div class="step-num">01</div>
+      <div class="step-content">
+        <h3>A cruz branca</h3>
+        <p>Forme uma cruz na face branca, com as cores dos meios alinhadas aos centros laterais.</p>
+      </div>
+      <div class="step-arrow">→</div>
+    </div>
+    <div class="tutorial" id="tut-1">
+      <div class="tut-header">
+        <div class="tut-title">Passo 1 — A Cruz Branca</div>
+        <button class="tut-close" onclick="closeTut(1)">×</button>
+      </div>
+      <div class="tut-body">
+        <div class="step-demo">
+          <div class="demo-side">
+            <div class="demo-label">ANTES</div>
+            <div class="demo-cube-stage"><div class="demo-3d" data-demo="1-before"></div></div>
+          </div>
+          <div class="demo-arrow">→</div>
+          <div class="demo-side">
+            <div class="demo-label after-label">DEPOIS</div>
+            <div class="demo-cube-stage"><div class="demo-3d" data-demo="1-after"></div></div>
+          </div>
+          <div class="demo-caption">O topo do cubo forma uma cruz branca. Os meios da cruz se alinham com os centros das faces laterais.</div>
+        </div>
+        <h4>Objetivo</h4>
+        <p>Montar uma cruz branca no topo do cubo. Cada uma das 4 peças da cruz precisa estar alinhada com o centro lateral da mesma cor.</p>
+        <h4>Como fazer</h4>
+        <p>Este é o único passo intuitivo, sem algoritmo fixo. Pegue cada meio branco e leve até o topo casando com o centro correspondente.</p>
+        <ul>
+          <li>Encontre um meio branco (ex: branco + vermelho).</li>
+          <li>Posicione ele embaixo do centro vermelho.</li>
+          <li>Se o branco estiver pra baixo: <span class="algo" data-algo="F2">F2</span> sobe direto.</li>
+          <li>Se estiver de lado: <span class="algo" data-algo="R U' R'">R U' R'</span> ou similar.</li>
+          <li>Repita pros outros 3 meios.</li>
+        </ul>
+        <div class="tip">
+          <strong>Validação:</strong> cada peça da cruz forma um T invertido com o centro lateral.
+        </div>
+      </div>
+    </div>
+
+    <div class="step" onclick="openTut(2)">
+      <div class="step-num">02</div>
+      <div class="step-content">
+        <h3>As quinas brancas</h3>
+        <p>Complete a face branca encaixando as 4 quinas nos cantos.</p>
+      </div>
+      <div class="step-arrow">→</div>
+    </div>
+    <div class="tutorial" id="tut-2">
+      <div class="tut-header">
+        <div class="tut-title">Passo 2 — As Quinas Brancas</div>
+        <button class="tut-close" onclick="closeTut(2)">×</button>
+      </div>
+      <div class="tut-body">
+        <div class="step-demo">
+          <div class="demo-side">
+            <div class="demo-label">ANTES</div>
+            <div class="demo-cube-stage"><div class="demo-3d" data-demo="2-before"></div></div>
+          </div>
+          <div class="demo-arrow">→</div>
+          <div class="demo-side">
+            <div class="demo-label after-label">DEPOIS</div>
+            <div class="demo-cube-stage"><div class="demo-3d" data-demo="2-after"></div></div>
+          </div>
+          <div class="demo-caption">Primeira camada completa: face branca toda branca e a primeira fileira das laterais alinhada.</div>
+        </div>
+        <h4>Como fazer</h4>
+        <p>Procure uma quina branca na camada de baixo e posicione ela abaixo do "buraco" correto. Depois:</p>
+        <ul>
+          <li>Branco apontando pra direita: <span class="algo" data-algo="R U R'">R U R'</span></li>
+          <li>Branco apontando pra frente: <span class="algo" data-algo="F' U' F">F' U' F</span></li>
+          <li>Branco pra baixo: <span class="algo" data-algo="R U R' U' R U R'">R U R' U' R U R'</span></li>
+        </ul>
+        <div class="tip">
+          <strong>Dica:</strong> trabalhe com o branco virado pra cima o tempo todo.
+        </div>
+      </div>
+    </div>
+
+    <div class="step" onclick="openTut(3)">
+      <div class="step-num">03</div>
+      <div class="step-content">
+        <h3>Segunda camada</h3>
+        <p>Vire o cubo e encaixe os 4 meios da camada do meio.</p>
+      </div>
+      <div class="step-arrow">→</div>
+    </div>
+    <div class="tutorial" id="tut-3">
+      <div class="tut-header">
+        <div class="tut-title">Passo 3 — A Segunda Camada</div>
+        <button class="tut-close" onclick="closeTut(3)">×</button>
+      </div>
+      <div class="tut-body">
+        <div class="step-demo">
+          <div class="demo-side">
+            <div class="demo-label">ANTES</div>
+            <div class="demo-cube-stage"><div class="demo-3d" data-demo="3-before"></div></div>
+          </div>
+          <div class="demo-arrow">→</div>
+          <div class="demo-side">
+            <div class="demo-label after-label">DEPOIS</div>
+            <div class="demo-cube-stage"><div class="demo-3d" data-demo="3-after"></div></div>
+          </div>
+          <div class="demo-caption">Duas camadas prontas. Só falta a camada de cima (amarela) para terminar.</div>
+        </div>
+        <h4>Como fazer</h4>
+        <p>Vire o cubo (amarelo em cima). Encontre um meio no topo SEM amarelo. Alinhe com o centro da mesma cor. Olhe a segunda cor:</p>
+        <ul>
+          <li><strong>Vai pra direita:</strong> <span class="algo" data-algo="U R U' R' U' F' U F">U R U' R' U' F' U F</span></li>
+          <li><strong>Vai pra esquerda:</strong> <span class="algo" data-algo="U' L' U L U F U' F'">U' L' U L U F U' F'</span></li>
+        </ul>
+        <div class="tip">
+          <strong>Truque:</strong> é sempre o mesmo padrão, só espelhado.
+        </div>
+      </div>
+    </div>
+
+    <div class="step" onclick="openTut(4)">
+      <div class="step-num">04</div>
+      <div class="step-content">
+        <h3>Cruz amarela</h3>
+        <p>Forme uma cruz amarela no topo, ignorando os cantos.</p>
+      </div>
+      <div class="step-arrow">→</div>
+    </div>
+    <div class="tutorial" id="tut-4">
+      <div class="tut-header">
+        <div class="tut-title">Passo 4 — A Cruz Amarela</div>
+        <button class="tut-close" onclick="closeTut(4)">×</button>
+      </div>
+      <div class="tut-body">
+        <div class="step-demo">
+          <div class="demo-side">
+            <div class="demo-label">ANTES</div>
+            <div class="demo-cube-stage"><div class="demo-3d" data-demo="4-before"></div></div>
+          </div>
+          <div class="demo-arrow">→</div>
+          <div class="demo-side">
+            <div class="demo-label after-label">DEPOIS</div>
+            <div class="demo-cube-stage"><div class="demo-3d" data-demo="4-after"></div></div>
+          </div>
+          <div class="demo-caption">Uma cruz amarela aparece no topo. As quinas amarelas continuam desordenadas — tudo bem.</div>
+        </div>
+        <h4>Como fazer</h4>
+        <p>Olhe pra face amarela do topo. Você vê um de três padrões:</p>
+        <ul>
+          <li><strong>Ponto só:</strong> aplique o algoritmo 3 vezes.</li>
+          <li><strong>Linha:</strong> segure horizontal, aplique 2 vezes.</li>
+          <li><strong>L:</strong> L no canto superior esquerdo, aplique 1 vez.</li>
+        </ul>
+        <p>O algoritmo mágico:</p>
+        <span class="algo" data-algo="F R U R' U' F'">F R U R' U' F'</span>
+        <div class="tip">
+          <strong>Sequência:</strong> ponto → L → linha → cruz.
+        </div>
+      </div>
+    </div>
+
+    <div class="step" onclick="openTut(5)">
+      <div class="step-num">05</div>
+      <div class="step-content">
+        <h3>Alinhar a cruz amarela</h3>
+        <p>Gire o topo para alinhar os meios da cruz com os centros laterais.</p>
+      </div>
+      <div class="step-arrow">→</div>
+    </div>
+    <div class="tutorial" id="tut-5">
+      <div class="tut-header">
+        <div class="tut-title">Passo 5 — Alinhar a Cruz Amarela</div>
+        <button class="tut-close" onclick="closeTut(5)">×</button>
+      </div>
+      <div class="tut-body">
+        <div class="step-demo">
+          <div class="demo-side">
+            <div class="demo-label">ANTES</div>
+            <div class="demo-cube-stage"><div class="demo-3d" data-demo="5-before"></div></div>
+          </div>
+          <div class="demo-arrow">→</div>
+          <div class="demo-side">
+            <div class="demo-label after-label">DEPOIS</div>
+            <div class="demo-cube-stage"><div class="demo-3d" data-demo="5-after"></div></div>
+          </div>
+          <div class="demo-caption">Os meios da cruz amarela alinhados com os centros das laterais. As quinas ainda desalinhadas.</div>
+        </div>
+        <h4>Como fazer</h4>
+        <p>Gire U até ter o máximo de meios alinhados. Cenários:</p>
+        <ul>
+          <li><strong>Dois certos lado a lado:</strong> coloque os certos atrás e à esquerda, aplique 1 vez.</li>
+          <li><strong>Dois certos opostos:</strong> aplique 1 vez, alinhe, aplique de novo.</li>
+        </ul>
+        <p>Algoritmo:</p>
+        <span class="algo" data-algo="R U R' U R U2 R'">R U R' U R U2 R'</span>
+        <div class="tip">
+          <strong>Nota:</strong> U2 significa duas rotações da face U (180°).
+        </div>
+      </div>
+    </div>
+
+    <div class="step" onclick="openTut(6)">
+      <div class="step-num">06</div>
+      <div class="step-content">
+        <h3>Posicionar as quinas amarelas</h3>
+        <p>Coloque cada quina no canto certo, ignorando rotação.</p>
+      </div>
+      <div class="step-arrow">→</div>
+    </div>
+    <div class="tutorial" id="tut-6">
+      <div class="tut-header">
+        <div class="tut-title">Passo 6 — Posicionar Quinas</div>
+        <button class="tut-close" onclick="closeTut(6)">×</button>
+      </div>
+      <div class="tut-body">
+        <div class="step-demo">
+          <div class="demo-side">
+            <div class="demo-label">ANTES</div>
+            <div class="demo-cube-stage"><div class="demo-3d" data-demo="6-before"></div></div>
+          </div>
+          <div class="demo-arrow">→</div>
+          <div class="demo-side">
+            <div class="demo-label after-label">DEPOIS</div>
+            <div class="demo-cube-stage"><div class="demo-3d" data-demo="6-after"></div></div>
+          </div>
+          <div class="demo-caption">Cada quina no canto certo (as 3 cores batem com os 3 centros daquele canto). A rotação ainda pode estar errada.</div>
+        </div>
+        <h4>Como fazer</h4>
+        <p>Encontre uma quina já no canto correto (as 3 cores batem com os 3 centros daquele canto):</p>
+        <ul>
+          <li><strong>Uma certa:</strong> coloque na frente-direita, aplique até todas resolverem.</li>
+          <li><strong>Nenhuma certa:</strong> aplique 1 vez em qualquer posição e vá pro caso acima.</li>
+        </ul>
+        <p>Algoritmo:</p>
+        <span class="algo" data-algo="U R U' L' U R' U' L">U R U' L' U R' U' L</span>
+      </div>
+    </div>
+
+    <div class="step" onclick="openTut(7)">
+      <div class="step-num">07</div>
+      <div class="step-content">
+        <h3>Orientar as quinas — FIM</h3>
+        <p>Rotacione cada quina para finalizar o cubo.</p>
+      </div>
+      <div class="step-arrow">→</div>
+    </div>
+    <div class="tutorial" id="tut-7">
+      <div class="tut-header">
+        <div class="tut-title">Passo 7 — Orientar Quinas (Final)</div>
+        <button class="tut-close" onclick="closeTut(7)">×</button>
+      </div>
+      <div class="tut-body">
+        <div class="step-demo">
+          <div class="demo-side">
+            <div class="demo-label">ANTES</div>
+            <div class="demo-cube-stage"><div class="demo-3d" data-demo="7-before"></div></div>
+          </div>
+          <div class="demo-arrow">→</div>
+          <div class="demo-side">
+            <div class="demo-label after-label">DEPOIS</div>
+            <div class="demo-cube-stage"><div class="demo-3d" data-demo="7-after"></div></div>
+          </div>
+          <div class="demo-caption">🎉 Cubo completamente resolvido. Todas as faces de uma cor só.</div>
+        </div>
+        <h4>Como fazer</h4>
+        <p><strong>Atenção:</strong> durante este passo, o cubo vai parecer MUITO bagunçado. Confie no processo.</p>
+        <ul>
+          <li>Escolha uma quina no topo SEM amarelo pra cima.</li>
+          <li>Posicione ela no canto frente-direito.</li>
+          <li>Aplique <span class="algo" data-algo="R' D' R D">R' D' R D</span> uma ou duas vezes até o amarelo subir.</li>
+          <li><strong>SEM virar o cubo</strong>, gire só o topo (U) pra trazer a próxima quina.</li>
+          <li>Repita <span class="algo" data-algo="R' D' R D">R' D' R D</span> até todas resolvidas.</li>
+          <li>Um U final alinha tudo.</li>
+        </ul>
+        <div class="tip">
+          <strong>Regra de ouro:</strong> NÃO vire o cubo durante este passo.
+        </div>
+        <h4 style="color:var(--green);margin-top:32px">🎉 PARABÉNS</h4>
+        <p>Você acabou de montar um cubo mágico. Pratica 20-30 vezes e já consegue fazer em menos de 2 minutos.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="big">MONTOU.</div>
+  <p>Feito pra quem achava que nunca ia conseguir.</p>
+  <p style="margin-top:20px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase">CUBO/3×3 · Método das camadas</p>
+</footer>
+
+<script>
+  // ============ CORES ============
+  const COLORS = {
+    R: '#00d26a',   // direita = verde
+    L: '#1e5fff',   // esquerda = azul
+    U: '#f4f1e8',   // topo = branco
+    D: '#ffd60a',   // base = amarelo
+    F: '#ff2e4c',   // frente = vermelho
+    B: '#ff6b1a'    // trás = laranja
+  };
+
+  // ============ MINI CUBO ESTÁTICO (para grid de movimentos) ============
+  function buildMiniCube(move){
+    const wrapper = document.createElement('div');
+    wrapper.className = 'mini-cube';
+
+    const baseMove = move.replace("'","").replace("2","");
+    const layerCheck = {
+      R: (x,y,z) => x===1,
+      L: (x,y,z) => x===-1,
+      U: (x,y,z) => y===1,
+      D: (x,y,z) => y===-1,
+      F: (x,y,z) => z===1,
+      B: (x,y,z) => z===-1,
+    }[baseMove];
+
+    const layerDiv = document.createElement('div');
+    layerDiv.className = 'layer layer-' + baseMove;
+
+    for(let x=-1;x<=1;x++){
+      for(let y=-1;y<=1;y++){
+        for(let z=-1;z<=1;z++){
+          const cubie = createCubie(x,y,z);
+          if(layerCheck(x,y,z)){
+            layerDiv.appendChild(cubie);
+          } else {
+            wrapper.appendChild(cubie);
+          }
+        }
+      }
+    }
+    wrapper.appendChild(layerDiv);
+    return wrapper;
+  }
+
+  function createCubie(x,y,z){
+    const size = 40;
+    const offset = 40;
+    const cubie = document.createElement('div');
+    cubie.className='cubie';
+    cubie.style.left='50%'; cubie.style.top='50%';
+    cubie.style.marginLeft=(-size/2)+'px';
+    cubie.style.marginTop=(-size/2)+'px';
+    cubie.style.transform = `translate3d(${x*offset}px, ${-y*offset}px, ${z*offset}px)`;
+
+    const faces = [
+      {cls:'f',  visible: z===1,  color: COLORS.F},
+      {cls:'bk', visible: z===-1, color: COLORS.B},
+      {cls:'rt', visible: x===1,  color: COLORS.R},
+      {cls:'lt', visible: x===-1, color: COLORS.L},
+      {cls:'tp', visible: y===1,  color: COLORS.U},
+      {cls:'bt', visible: y===-1, color: COLORS.D},
+    ];
+    faces.forEach(f=>{
+      const faceDiv = document.createElement('div');
+      faceDiv.className = 'cf ' + f.cls;
+      if(f.visible){
+        faceDiv.classList.add('sticker-on');
+        faceDiv.style.background = f.color;
+      }
+      cubie.appendChild(faceDiv);
+    });
+    return cubie;
+  }
+
+  // ============ GRID DE MOVIMENTOS ============
+  const MOVES = [
+    {k:'R',  name:'Right',      desc:'Face da direita gira 90° sentido horário.'},
+    {k:"R'", name:"Right prime",desc:'Face da direita gira 90° anti-horário.'},
+    {k:'L',  name:'Left',       desc:'Face da esquerda gira 90° sentido horário.'},
+    {k:"L'", name:"Left prime", desc:'Face da esquerda gira 90° anti-horário.'},
+    {k:'U',  name:'Up',         desc:'Face de cima gira 90° horário (vista de cima).'},
+    {k:"U'", name:"Up prime",   desc:'Face de cima gira 90° anti-horário.'},
+    {k:'D',  name:'Down',       desc:'Face de baixo gira 90° horário (vista de baixo).'},
+    {k:"D'", name:"Down prime", desc:'Face de baixo gira 90° anti-horário.'},
+    {k:'F',  name:'Front',      desc:'Face da frente gira 90° sentido horário.'},
+    {k:"F'", name:"Front prime",desc:'Face da frente gira 90° anti-horário.'},
+    {k:'B',  name:'Back',       desc:'Face de trás gira 90° horário (vista de trás).'},
+    {k:"B'", name:"Back prime", desc:'Face de trás gira 90° anti-horário.'},
+  ];
+
+  const grid = document.getElementById('movesGrid');
+  MOVES.forEach(m=>{
+    const card = document.createElement('div');
+    card.className = 'move-card';
+    const animClass = 'anim-' + m.k.replace("'","p");
+
+    card.innerHTML = `
+      <div class="move-header">
+        <div class="move-letter">${m.k}</div>
+        <div class="move-name">${m.name}</div>
+      </div>
+      <div class="move-cube-stage ${animClass}"></div>
+      <div class="move-desc">${m.desc}</div>
+      <button class="replay-btn">↻ REPRODUZIR</button>
+    `;
+
+    const stage = card.querySelector('.move-cube-stage');
+    stage.appendChild(buildMiniCube(m.k));
+
+    card.querySelector('.replay-btn').addEventListener('click', ()=>{
+      stage.classList.remove(animClass);
+      void stage.offsetWidth;
+      stage.classList.add(animClass);
+    });
+
+    grid.appendChild(card);
+  });
+
+  // ============ TUTORIAL OPEN/CLOSE ============
+  function openTut(n){
+    document.querySelectorAll('.tutorial').forEach(t=>t.classList.remove('active'));
+    const tut = document.getElementById('tut-'+n);
+    tut.classList.add('active');
+    // Renderiza os demos desse tutorial (se ainda não renderizados)
+    renderStepDemos(tut);
+    setTimeout(()=>tut.scrollIntoView({behavior:'smooth',block:'center'}),100);
+  }
+  function closeTut(n){
+    document.getElementById('tut-'+n).classList.remove('active');
+    document.querySelectorAll('.algo-player').forEach(p=>p.remove());
+  }
+
+  // ============ ALGO PLAYER ============
+  // Estado lógico do cubo: 27 cubies, cada um com posição e orientação
+  function initCubeState(){
+    const cubies = [];
+    for(let x=-1;x<=1;x++)
+      for(let y=-1;y<=1;y++)
+        for(let z=-1;z<=1;z++){
+          cubies.push({
+            pos:{x,y,z},
+            origPos:{x,y,z},
+            orient: [[1,0,0],[0,1,0],[0,0,1]]
+          });
+        }
+    return cubies;
+  }
+
+  function renderFullCube(container, cubies){
+    container.innerHTML = '';
+    cubies.forEach(c=>renderSingleCubie(container, c));
+  }
+
+  function renderSingleCubie(container, c){
+    const size = 40;
+    const offset = 40;
+    const cubie = document.createElement('div');
+    cubie.className='cubie';
+    const m = c.orient;
+    const tx = c.pos.x*offset;
+    const ty = -c.pos.y*offset;
+    const tz = c.pos.z*offset;
+    const mat = [
+      m[0][0], m[1][0], m[2][0], 0,
+      m[0][1], m[1][1], m[2][1], 0,
+      m[0][2], m[1][2], m[2][2], 0,
+      tx, ty, tz, 1
+    ];
+    cubie.style.transform = `matrix3d(${mat.join(',')})`;
+    cubie.style.left='50%'; cubie.style.top='50%';
+    cubie.style.marginLeft=(-size/2)+'px';
+    cubie.style.marginTop=(-size/2)+'px';
+
+    const ox = c.origPos.x, oy = c.origPos.y, oz = c.origPos.z;
+    const faces = [
+      {cls:'f',  visible: oz===1,  color: COLORS.F},
+      {cls:'bk', visible: oz===-1, color: COLORS.B},
+      {cls:'rt', visible: ox===1,  color: COLORS.R},
+      {cls:'lt', visible: ox===-1, color: COLORS.L},
+      {cls:'tp', visible: oy===1,  color: COLORS.U},
+      {cls:'bt', visible: oy===-1, color: COLORS.D},
+    ];
+    faces.forEach(f=>{
+      const faceDiv = document.createElement('div');
+      faceDiv.className = 'cf ' + f.cls;
+      if(f.visible){
+        faceDiv.classList.add('sticker-on');
+        faceDiv.style.background = f.color;
+      }
+      cubie.appendChild(faceDiv);
+    });
+    container.appendChild(cubie);
+  }
+
+  // Aplica uma ÚNICA rotação de 90° (horário ou anti) na camada e re-renderiza
+  // prime = true significa anti-horário
+  function applyMoveAnimated(cubeBox, cubies, base, prime){
+    return new Promise(resolve=>{
+      const layerCheck = {
+        R: c=>c.pos.x===1,
+        L: c=>c.pos.x===-1,
+        U: c=>c.pos.y===1,
+        D: c=>c.pos.y===-1,
+        F: c=>c.pos.z===1,
+        B: c=>c.pos.z===-1,
+      }[base];
+
+      // Config de rotação CSS: para cada face, eixo e sinal pra "horário visto da face"
+      const rotationConfig = {
+        R: {axis:'X', sign:-1},
+        L: {axis:'X', sign: 1},
+        U: {axis:'Y', sign:-1},
+        D: {axis:'Y', sign: 1},
+        F: {axis:'Z', sign:-1},
+        B: {axis:'Z', sign: 1},
+      }[base];
+
+      const angle = 90 * rotationConfig.sign * (prime ? -1 : 1);
+
+      // Separa em 2 grupos: camada vs resto
+      const layerCubies = cubies.filter(layerCheck);
+      const restCubies = cubies.filter(c=>!layerCheck(c));
+
+      cubeBox.innerHTML = '';
+      // Resto vai direto no box
+      restCubies.forEach(c=>renderSingleCubie(cubeBox, c));
+      // Camada vai dentro de um wrapper animado
+      const layerWrap = document.createElement('div');
+      layerWrap.style.position='absolute';
+      layerWrap.style.inset='0';
+      layerWrap.style.width='120px';
+      layerWrap.style.height='120px';
+      layerWrap.style.transformStyle='preserve-3d';
+      layerWrap.style.transition='transform 0.42s cubic-bezier(.65,.05,.36,1)';
+      layerCubies.forEach(c=>renderSingleCubie(layerWrap, c));
+      cubeBox.appendChild(layerWrap);
+
+      // Força reflow e aplica rotação
+      void layerWrap.offsetWidth;
+      layerWrap.style.transform = `rotate${rotationConfig.axis}(${angle}deg)`;
+
+      setTimeout(()=>{
+        // Atualiza estado lógico
+        layerCubies.forEach(c=>rotateLayerLogic(c, base, prime));
+        // Re-renderiza tudo
+        renderFullCube(cubeBox, cubies);
+        resolve();
+      }, 460);
+    });
+  }
+
+  function rotateLayerLogic(c, base, prime){
+    // Matrizes de rotação 90° horário (visto da face positiva)
+    // Para R (eixo +x), horário visto de +x: y->-z, z->y no sistema de coordenadas,
+    // MAS nosso sistema tem y invertido em Y (css), então usamos as matrizes que casam com o movimento CSS.
+    // Validação: para R horário (rotateX negativo no CSS), a face frontal (z=1) vai pra cima (y=1).
+    // No nosso estado lógico, z=1 ->  y=1, e y=1 -> z=-1, y=-1 -> z=1, z=-1 -> y=-1
+    // Matriz aplicada em (x,y,z): y' = z, z' = -y  => [[1,0,0],[0,0,1],[0,-1,0]]
+    const rotations = {
+      R:  [[1,0,0],[0,0,1],[0,-1,0]],   // horário visto de +x
+      L:  [[1,0,0],[0,0,-1],[0,1,0]],   // horário visto de -x = anti-horário visto de +x
+      U:  [[0,0,1],[0,1,0],[-1,0,0]],   // horário visto de +y: x'=z, z'=-x
+      D:  [[0,0,-1],[0,1,0],[1,0,0]],
+      F:  [[0,1,0],[-1,0,0],[0,0,1]],   // horário visto de +z: x'=y, y'=-x
+      B:  [[0,-1,0],[1,0,0],[0,0,1]],
+    };
+    let R = rotations[base];
+    if(prime) R = transpose(R);
+
+    const p = c.pos;
+    c.pos = {
+      x: Math.round(R[0][0]*p.x + R[0][1]*p.y + R[0][2]*p.z),
+      y: Math.round(R[1][0]*p.x + R[1][1]*p.y + R[1][2]*p.z),
+      z: Math.round(R[2][0]*p.x + R[2][1]*p.y + R[2][2]*p.z),
+    };
+    c.orient = matMul(R, c.orient);
+  }
+
+  function transpose(M){
+    return [
+      [M[0][0],M[1][0],M[2][0]],
+      [M[0][1],M[1][1],M[2][1]],
+      [M[0][2],M[1][2],M[2][2]],
+    ];
+  }
+  function matMul(A,B){
+    const C=[[0,0,0],[0,0,0],[0,0,0]];
+    for(let i=0;i<3;i++)
+      for(let j=0;j<3;j++)
+        for(let k=0;k<3;k++)
+          C[i][j]+=A[i][k]*B[k][j];
+    return C;
+  }
+
+  // Parse algoritmo em tokens individuais (R, R', U2, etc)
+  function parseAlgo(str){
+    return str.trim().split(/\s+/).filter(Boolean);
+  }
+
+  // Expande U2 em U U pra animar
+  function expandToken(token){
+    const base = token[0];
+    const rest = token.slice(1);
+    if(rest === '2') return [base, base];
+    return [token];
+  }
+
+  // ============ CUBO COM ESTADO CUSTOMIZADO (para demos) ============
+  // stickerMap define a cor de cada adesivo visível
+  // Formato: {face: [9 cores em ordem linha-por-linha da perspectiva "olhando para a face"]}
+  // Cores curtas: w=branco, y=amarelo, r=vermelho, o=laranja, g=verde, b=azul, x=cinza (não resolvido)
+  const SHORT_COLORS = {
+    w:'#f4f1e8', y:'#ffd60a', r:'#ff2e4c', o:'#ff6b1a',
+    g:'#00d26a', b:'#1e5fff', x:'#2a2a35'
+  };
+
+  // Mapeia qual sticker de qual face cada cubie mostra
+  // Layout: para cada face, grid 3x3, indexado 0-8 (linha por linha, da esquerda pra direita, de cima pra baixo)
+  // Para a face U (topo) olhando de cima: linha 0 = z=-1 (fundo), linha 2 = z=1 (frente); coluna 0 = x=-1 (esq), coluna 2 = x=1 (dir)
+  // Para F (frente): linha 0 = y=1 (cima), linha 2 = y=-1 (baixo); col 0 = x=-1 (esq), col 2 = x=1 (dir)
+  function getFaceIndex(face, x, y, z){
+    // Retorna índice 0-8 no grid 3x3 da face, ou -1 se não pertencer
+    if(face==='U' && y===1){
+      // linha: z=-1→0, z=0→1, z=1→2; col: x=-1→0, x=0→1, x=1→2
+      return (z+1)*3 + (x+1);
+    }
+    if(face==='D' && y===-1){
+      // olhando de baixo: linha z=1→0, z=-1→2; col x=-1→0, x=1→2
+      return (1-z)*3 + (x+1);
+    }
+    if(face==='F' && z===1){
+      // linha y=1→0, y=-1→2; col x=-1→0, x=1→2
+      return (1-y)*3 + (x+1);
+    }
+    if(face==='B' && z===-1){
+      // olhando de trás: linha y=1→0, y=-1→2; col x=1→0, x=-1→2 (invertido)
+      return (1-y)*3 + (1-x);
+    }
+    if(face==='R' && x===1){
+      // olhando da direita: linha y=1→0, y=-1→2; col z=1→0, z=-1→2
+      return (1-y)*3 + (1-z);
+    }
+    if(face==='L' && x===-1){
+      // olhando da esquerda: linha y=1→0, y=-1→2; col z=-1→0, z=1→2
+      return (1-y)*3 + (z+1);
+    }
+    return -1;
+  }
+
+  function populateCubeInto(container, stickerMap){
+    container.innerHTML = '';
+    for(let x=-1;x<=1;x++){
+      for(let y=-1;y<=1;y++){
+        for(let z=-1;z<=1;z++){
+          const size = 40;
+          const offset = 40;
+          const cubie = document.createElement('div');
+          cubie.className='cubie';
+          cubie.style.left='50%'; cubie.style.top='50%';
+          cubie.style.marginLeft=(-size/2)+'px';
+          cubie.style.marginTop=(-size/2)+'px';
+          cubie.style.transform = `translate3d(${x*offset}px, ${-y*offset}px, ${z*offset}px)`;
+
+          const faces = [
+            {cls:'f',  face:'F', visible: z===1},
+            {cls:'bk', face:'B', visible: z===-1},
+            {cls:'rt', face:'R', visible: x===1},
+            {cls:'lt', face:'L', visible: x===-1},
+            {cls:'tp', face:'U', visible: y===1},
+            {cls:'bt', face:'D', visible: y===-1},
+          ];
+          faces.forEach(f=>{
+            const faceDiv = document.createElement('div');
+            faceDiv.className = 'cf ' + f.cls;
+            if(f.visible){
+              const idx = getFaceIndex(f.face, x, y, z);
+              const colorKey = stickerMap[f.face] ? stickerMap[f.face][idx] : 'x';
+              faceDiv.classList.add('sticker-on');
+              faceDiv.style.background = SHORT_COLORS[colorKey] || SHORT_COLORS.x;
+            }
+            cubie.appendChild(faceDiv);
+          });
+          container.appendChild(cubie);
+        }
+      }
+    }
+  }
+
+  // ============ ESTADOS DOS PASSOS ============
+  // Convenção do método: branco em baixo primeiro (passos 1-2), depois amarelo em cima (passos 3-7)
+  // Usamos 'x' para peças "não resolvidas" (mostradas em cinza escuro)
+
+  // Passo 1 INÍCIO: cubo embaralhado
+  const STATE_START = {
+    U: ['r','g','w','y','w','o','b','r','g'],
+    D: ['o','y','b','r','y','g','w','o','y'],
+    F: ['y','w','r','g','r','b','o','y','w'],
+    B: ['b','o','y','r','o','w','g','b','r'],
+    R: ['w','b','o','y','g','r','b','g','y'],
+    L: ['g','r','w','o','b','y','r','w','o'],
+  };
+
+  // Passo 1 OBJETIVO: cruz branca embaixo alinhada
+  // Branco está em D (baixo). Cruz branca = meios de D brancos + meios laterais alinhados aos centros
+  // Mas é mais didático mostrar com branco EM CIMA
+  const STATE_S1_DONE = {
+    U: ['x','w','x','w','w','w','x','w','x'],
+    D: ['x','x','x','x','y','x','x','x','x'],
+    F: ['x','r','x','x','r','x','x','x','x'],
+    B: ['x','o','x','x','o','x','x','x','x'],
+    R: ['x','g','x','x','g','x','x','x','x'],
+    L: ['x','b','x','x','b','x','x','x','x'],
+  };
+
+  // Passo 2 OBJETIVO: primeira camada completa (face branca + primeira fileira lateral)
+  const STATE_S2_DONE = {
+    U: ['w','w','w','w','w','w','w','w','w'],
+    D: ['x','x','x','x','y','x','x','x','x'],
+    F: ['r','r','r','x','r','x','x','x','x'],
+    B: ['o','o','o','x','o','x','x','x','x'],
+    R: ['g','g','g','x','g','x','x','x','x'],
+    L: ['b','b','b','x','b','x','x','x','x'],
+  };
+
+  // Passo 3 OBJETIVO: duas camadas (F2L) - com amarelo agora em cima (cubo virado)
+  const STATE_S3_DONE = {
+    U: ['x','x','x','x','y','x','x','x','x'],
+    D: ['w','w','w','w','w','w','w','w','w'],
+    F: ['x','x','x','r','r','r','r','r','r'],
+    B: ['x','x','x','o','o','o','o','o','o'],
+    R: ['x','x','x','g','g','g','g','g','g'],
+    L: ['x','x','x','b','b','b','b','b','b'],
+  };
+
+  // Passo 4 OBJETIVO: cruz amarela (ainda sem alinhar, cantos desordenados)
+  const STATE_S4_DONE = {
+    U: ['x','y','x','y','y','y','x','y','x'],
+    D: ['w','w','w','w','w','w','w','w','w'],
+    F: ['x','g','x','r','r','r','r','r','r'],  // meio da cruz desalinhado (g onde devia ser r)
+    B: ['x','r','x','o','o','o','o','o','o'],
+    R: ['x','o','x','g','g','g','g','g','g'],
+    L: ['x','b','x','b','b','b','b','b','b'],
+  };
+
+  // Passo 5 OBJETIVO: cruz amarela alinhada (meios da cruz combinam com centros laterais)
+  const STATE_S5_DONE = {
+    U: ['x','y','x','y','y','y','x','y','x'],
+    D: ['w','w','w','w','w','w','w','w','w'],
+    F: ['x','r','x','r','r','r','r','r','r'],  // agora alinhado
+    B: ['x','o','x','o','o','o','o','o','o'],
+    R: ['x','g','x','g','g','g','g','g','g'],
+    L: ['x','b','x','b','b','b','b','b','b'],
+  };
+
+  // Passo 6 OBJETIVO: quinas amarelas posicionadas (mas não necessariamente orientadas)
+  // Mostramos as quinas com as cores corretas nos cantos certos, mas algumas rotacionadas
+  const STATE_S6_DONE = {
+    U: ['r','y','g','y','y','y','b','y','o'],  // quinas no lugar certo mas orientadas errado
+    D: ['w','w','w','w','w','w','w','w','w'],
+    F: ['y','r','y','r','r','r','r','r','r'],
+    B: ['y','o','y','o','o','o','o','o','o'],
+    R: ['g','g','o','g','g','g','g','g','g'],
+    L: ['r','b','b','b','b','b','b','b','b'],
+  };
+
+  // Passo 7 OBJETIVO: cubo totalmente resolvido
+  const STATE_S7_DONE = {
+    U: ['y','y','y','y','y','y','y','y','y'],
+    D: ['w','w','w','w','w','w','w','w','w'],
+    F: ['r','r','r','r','r','r','r','r','r'],
+    B: ['o','o','o','o','o','o','o','o','o'],
+    R: ['g','g','g','g','g','g','g','g','g'],
+    L: ['b','b','b','b','b','b','b','b','b'],
+  };
+
+  const STEP_STATES = [
+    null, // index 0 não usado
+    {before: STATE_START,   after: STATE_S1_DONE, caption:'Cruz branca formada, alinhada com os centros laterais.'},
+    {before: STATE_S1_DONE, after: STATE_S2_DONE, caption:'Face branca completa e primeira fileira lateral resolvida.'},
+    {before: STATE_S2_DONE, after: STATE_S3_DONE, caption:'Duas camadas prontas. Só falta a camada de cima (amarela).'},
+    {before: STATE_S3_DONE, after: STATE_S4_DONE, caption:'Cruz amarela no topo (cantos ainda desorganizados).'},
+    {before: STATE_S4_DONE, after: STATE_S5_DONE, caption:'Meios da cruz agora batem com os centros laterais.'},
+    {before: STATE_S5_DONE, after: STATE_S6_DONE, caption:'Quinas nos cantos certos, mas ainda rotacionadas erradas.'},
+    {before: STATE_S6_DONE, after: STATE_S7_DONE, caption:'Cubo totalmente resolvido. Você conseguiu!'},
+  ];
+
+  // Renderiza os cubos 3D nos placeholders data-demo="N-before" e data-demo="N-after"
+  function renderStepDemos(){
+    for(let i=1; i<=7; i++){
+      const state = STEP_STATES[i];
+      if(!state) continue;
+
+      const beforeEl = document.querySelector(`[data-demo="${i}-before"]`);
+      const afterEl  = document.querySelector(`[data-demo="${i}-after"]`);
+
+      if(beforeEl) populateCubeInto(beforeEl, state.before);
+      if(afterEl)  populateCubeInto(afterEl,  state.after);
+    }
+  }
+  renderStepDemos();
+
+  // ============ PLAYER UI ============
+  document.addEventListener('click', (e)=>{
+    const el = e.target.closest('.algo[data-algo]');
+    if(!el) return;
+    const algo = el.getAttribute('data-algo');
+    playAlgorithm(algo, el);
+  });
+
+  function playAlgorithm(algoStr, anchorEl){
+    // Remove player anterior
+    document.querySelectorAll('.algo-player').forEach(p=>p.remove());
+
+    const tokens = parseAlgo(algoStr);
+
+    const player = document.createElement('div');
+    player.className = 'algo-player';
+    player.innerHTML = `
+      <div class="algo-player-stage"></div>
+      <div class="algo-player-controls">
+        <div class="algo-player-label">Algoritmo · clique em reproduzir</div>
+        <div class="algo-seq">
+          ${tokens.map((m,i)=>`<span class="algo-move" data-i="${i}">${m}</span>`).join('')}
+        </div>
+        <div class="algo-buttons">
+          <button class="algo-play">▶ REPRODUZIR</button>
+          <button class="algo-close" title="Fechar">×</button>
+        </div>
+      </div>
+    `;
+    anchorEl.parentNode.insertBefore(player, anchorEl.nextSibling);
+
+    const stage = player.querySelector('.algo-player-stage');
+    const cubeBox = document.createElement('div');
+    cubeBox.style.position='relative';
+    cubeBox.style.width='120px';
+    cubeBox.style.height='120px';
+    cubeBox.style.transformStyle='preserve-3d';
+    cubeBox.style.transform='rotateX(-22deg) rotateY(-32deg)';
+    stage.appendChild(cubeBox);
+
+    let cubies = initCubeState();
+    renderFullCube(cubeBox, cubies);
+
+    const playBtn = player.querySelector('.algo-play');
+    const closeBtn = player.querySelector('.algo-close');
+    const moveEls = player.querySelectorAll('.algo-move');
+
+    closeBtn.addEventListener('click', ()=>player.remove());
+
+    playBtn.addEventListener('click', async ()=>{
+      playBtn.disabled = true;
+      playBtn.textContent = '▶ EXECUTANDO...';
+      // Reset
+      cubies = initCubeState();
+      renderFullCube(cubeBox, cubies);
+      moveEls.forEach(e=>{e.classList.remove('active','done')});
+
+      for(let i=0; i<tokens.length; i++){
+        moveEls.forEach(e=>e.classList.remove('active'));
+        moveEls[i].classList.add('active');
+
+        // Expande (ex: U2 -> U, U)
+        const subMoves = expandToken(tokens[i]);
+        for(const sub of subMoves){
+          const base = sub[0];
+          const prime = sub.includes("'");
+          await applyMoveAnimated(cubeBox, cubies, base, prime);
+          await sleep(80);
+        }
+        moveEls[i].classList.remove('active');
+        moveEls[i].classList.add('done');
+      }
+      playBtn.disabled = false;
+      playBtn.textContent = '↻ REPRODUZIR DE NOVO';
+    });
+  }
+
+  function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+</script>
+
+</body>
+</html>
