@@ -1523,7 +1523,7 @@
   // Cores curtas: w=branco, y=amarelo, r=vermelho, o=laranja, g=verde, b=azul, x=cinza (não resolvido)
   const SHORT_COLORS = {
     w:'#f4f1e8', y:'#ffd60a', r:'#ff2e4c', o:'#ff6b1a',
-    g:'#00d26a', b:'#1e5fff', x:'#2a2a35'
+    g:'#00d26a', b:'#1e5fff', x:'#55556a'
   };
 
   // Mapeia qual sticker de qual face cada cubie mostra
@@ -1581,14 +1581,16 @@
             {cls:'tp', face:'U', visible: y===1},
             {cls:'bt', face:'D', visible: y===-1},
           ];
+          const PLASTIC = '#3a3a42';
           faces.forEach(f=>{
             const faceDiv = document.createElement('div');
-            faceDiv.className = 'cf ' + f.cls;
+            faceDiv.className = 'cf ' + f.cls + ' sticker-on';
             if(f.visible){
               const idx = getFaceIndex(f.face, x, y, z);
               const colorKey = stickerMap[f.face] ? stickerMap[f.face][idx] : 'x';
-              faceDiv.classList.add('sticker-on');
               faceDiv.style.background = SHORT_COLORS[colorKey] || SHORT_COLORS.x;
+            } else {
+              faceDiv.style.background = PLASTIC;
             }
             cubie.appendChild(faceDiv);
           });
