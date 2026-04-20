@@ -1279,8 +1279,13 @@
     const PLASTIC = '#6a6a7e';
     faces.forEach(f=>{
       const faceDiv = document.createElement('div');
-      faceDiv.className = 'cf ' + f.cls + ' sticker-on';
-      faceDiv.style.background = f.visible ? f.color : PLASTIC;
+      faceDiv.className = 'cf ' + f.cls;
+      if(f.visible){
+        faceDiv.classList.add('sticker-on');
+        faceDiv.style.background = f.color;
+      } else {
+        faceDiv.style.background = PLASTIC;
+      }
       cubie.appendChild(faceDiv);
     });
     return cubie;
@@ -1397,8 +1402,13 @@
     const PLASTIC = '#6a6a7e';
     faces.forEach(f=>{
       const faceDiv = document.createElement('div');
-      faceDiv.className = 'cf ' + f.cls + ' sticker-on';
-      faceDiv.style.background = f.visible ? f.color : PLASTIC;
+      faceDiv.className = 'cf ' + f.cls;
+      if(f.visible){
+        faceDiv.classList.add('sticker-on');
+        faceDiv.style.background = f.color;
+      } else {
+        faceDiv.style.background = PLASTIC;
+      }
       cubie.appendChild(faceDiv);
     });
     container.appendChild(cubie);
@@ -1584,8 +1594,9 @@
           const PLASTIC = '#6a6a7e';
           faces.forEach(f=>{
             const faceDiv = document.createElement('div');
-            faceDiv.className = 'cf ' + f.cls + ' sticker-on';
+            faceDiv.className = 'cf ' + f.cls;
             if(f.visible){
+              faceDiv.classList.add('sticker-on');
               const idx = getFaceIndex(f.face, x, y, z);
               const colorKey = stickerMap[f.face] ? stickerMap[f.face][idx] : 'x';
               faceDiv.style.background = SHORT_COLORS[colorKey] || SHORT_COLORS.x;
