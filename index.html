@@ -1380,9 +1380,9 @@
     const ty = -c.pos.y*offset;
     const tz = c.pos.z*offset;
     const mat = [
-      m[0][0], m[1][0], m[2][0], 0,
-      m[0][1], m[1][1], m[2][1], 0,
-      m[0][2], m[1][2], m[2][2], 0,
+       m[0][0], -m[1][0],  m[2][0], 0,
+      -m[0][1],  m[1][1], -m[2][1], 0,
+       m[0][2], -m[1][2],  m[2][2], 0,
       tx, ty, tz, 1
     ];
     cubie.style.transform = `matrix3d(${mat.join(',')})`;
