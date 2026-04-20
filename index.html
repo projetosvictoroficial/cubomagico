@@ -1307,8 +1307,8 @@
 
   // ============ GRID DE MOVIMENTOS ============
   const MOVES = [
-    {k:"R'", label:"D'", name:"Direita pra trás",   desc:'Face da direita gira 90° sentido horário.'},
-    {k:'R',  label:'D',  name:'Direita',            desc:'Face da direita gira 90° sentido anti-horário.'},
+    {k:'R',  label:'D',  animKey:"R'", name:'Direita',          desc:'Face da direita gira 90° sentido anti-horário.'},
+    {k:"R'", label:"D'", animKey:'R', name:"Direita pra trás", desc:'Face da direita gira 90° sentido horário.'},
     {k:'L',  label:'E',  name:'Esquerda',           desc:'Face da esquerda gira 90° sentido horário.'},
     {k:"L'", label:"E'", name:"Esquerda pra trás",  desc:'Face da esquerda gira 90° sentido anti-horário.'},
     {k:'U',  label:'C',  name:'Cima',               desc:'Face de cima gira 90° horário (vista de cima).'},
@@ -1325,7 +1325,8 @@
   MOVES.forEach(m=>{
     const card = document.createElement('div');
     card.className = 'move-card';
-    const animClass = 'anim-' + m.k.replace("'","p");
+    const cubeKey = m.animKey || m.k;
+    const animClass = 'anim-' + cubeKey.replace("'","p");
 
     card.innerHTML = `
       <div class="move-header">
@@ -1338,7 +1339,7 @@
     `;
 
     const stage = card.querySelector('.move-cube-stage');
-    stage.appendChild(buildMiniCube(m.k));
+    stage.appendChild(buildMiniCube(cubeKey));
 
     card.querySelector('.replay-btn').addEventListener('click', ()=>{
       stage.classList.remove(animClass);
