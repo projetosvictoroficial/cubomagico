@@ -918,7 +918,7 @@
   <div class="section-num">02 // LINGUAGEM VISUAL</div>
   <h2 class="section-title">Os 12 movimentos, animados em 3D.</h2>
   <p class="section-desc">
-    Cada letra representa uma face do cubo. Sozinha gira 90° horário. Com apóstrofo (R') gira anti-horário. Observe as animações — depois de uns 30 segundos olhando, você já sabe de cor.
+    Cada letra representa uma face do cubo. Sozinha, gira no sentido horário. Com o sinal de aspas (') depois da letra — por exemplo R' — significa "ao contrário", ou seja, gira no sentido anti-horário. Observe as animações — depois de uns 30 segundos olhando, você já sabe de cor.
   </p>
 
   <div class="moves-grid" id="movesGrid"></div>
@@ -1307,18 +1307,18 @@
 
   // ============ GRID DE MOVIMENTOS ============
   const MOVES = [
-    {k:'R',  name:'Right',      desc:'Face da direita gira 90° sentido horário.'},
-    {k:"R'", name:"Right prime",desc:'Face da direita gira 90° anti-horário.'},
-    {k:'L',  name:'Left',       desc:'Face da esquerda gira 90° sentido horário.'},
-    {k:"L'", name:"Left prime", desc:'Face da esquerda gira 90° anti-horário.'},
-    {k:'U',  name:'Up',         desc:'Face de cima gira 90° horário (vista de cima).'},
-    {k:"U'", name:"Up prime",   desc:'Face de cima gira 90° anti-horário.'},
-    {k:'D',  name:'Down',       desc:'Face de baixo gira 90° horário (vista de baixo).'},
-    {k:"D'", name:"Down prime", desc:'Face de baixo gira 90° anti-horário.'},
-    {k:'F',  name:'Front',      desc:'Face da frente gira 90° sentido horário.'},
-    {k:"F'", name:"Front prime",desc:'Face da frente gira 90° anti-horário.'},
-    {k:'B',  name:'Back',       desc:'Face de trás gira 90° horário (vista de trás).'},
-    {k:"B'", name:"Back prime", desc:'Face de trás gira 90° anti-horário.'},
+    {k:'R',  name:'Direita',            desc:'Face da direita gira 90° sentido horário.'},
+    {k:"R'", name:"Direita ao contrário",desc:'Face da direita gira 90° sentido anti-horário.'},
+    {k:'L',  name:'Esquerda',           desc:'Face da esquerda gira 90° sentido horário.'},
+    {k:"L'", name:"Esquerda ao contrário",desc:'Face da esquerda gira 90° sentido anti-horário.'},
+    {k:'U',  name:'Cima',               desc:'Face de cima gira 90° horário (vista de cima).'},
+    {k:"U'", name:"Cima ao contrário",  desc:'Face de cima gira 90° anti-horário (vista de cima).'},
+    {k:'D',  name:'Baixo',              desc:'Face de baixo gira 90° horário (vista de baixo).'},
+    {k:"D'", name:"Baixo ao contrário", desc:'Face de baixo gira 90° anti-horário (vista de baixo).'},
+    {k:'F',  name:'Frente',             desc:'Face da frente gira 90° sentido horário.'},
+    {k:"F'", name:"Frente ao contrário",desc:'Face da frente gira 90° sentido anti-horário.'},
+    {k:'B',  name:'Trás',               desc:'Face de trás gira 90° horário (vista de trás).'},
+    {k:"B'", name:"Trás ao contrário",  desc:'Face de trás gira 90° anti-horário (vista de trás).'},
   ];
 
   const grid = document.getElementById('movesGrid');
