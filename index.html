@@ -1774,7 +1774,7 @@
   }
 
   // Embaralha o cubo aplicando o inverso do algoritmo
-  // (assim quando o algoritmo é reproduzido, ele resolve a bagunça)
+  // (assim quando o algoritmo é reproduzido, ele resolve essa parte)
   function scrambleWithInverse(cubies, algoStr){
     const tokens = parseAlgo(algoStr);
     for(let i = tokens.length - 1; i >= 0; i--){
@@ -1782,10 +1782,23 @@
       for(let j = subMoves.length - 1; j >= 0; j--){
         const sub = subMoves[j];
         const base = sub[0];
-        const prime = !sub.includes("'"); // inverte o sentido
+        const prime = !sub.includes("'");
         applyMoveSilent(cubies, base, prime);
       }
     }
+  }
+
+  // Coloca o cubo num estado de "meio da resolução":
+  // aplica uma bagunça extra que o algoritmo NÃO desfaz, depois aplica
+  // o inverso do algoritmo. Assim ao reproduzir, o algoritmo resolve
+  // apenas a parte dele e o cubo fica num estado intermediário (não totalmente resolvido).
+  function scrambleMidSolve(cubies, algoStr){
+    // Contexto fixo: D seguido de U — ambos permanecem após o algo rodar,
+    // dando a sensação de "cubo em progresso"
+    applyMoveSilent(cubies, 'D', false);
+    applyMoveSilent(cubies, 'U', false);
+    // Agora aplica o inverso do algoritmo em cima
+    scrambleWithInverse(cubies, algoStr);
   }
 
   function playAlgorithm(algoStr, anchorEl){
@@ -1799,7 +1812,7 @@
     player.innerHTML = `
       <div class="algo-player-stage"></div>
       <div class="algo-player-controls">
-        <div class="algo-player-label">Cubo embaralhado · clique em reproduzir pra ver o algoritmo resolver</div>
+        <div class="algo-player-label">Cubo no meio da resolução · o algoritmo resolve essa parte</div>
         <div class="algo-seq">
           ${tokens.map((m,i)=>`<span class="algo-move" data-i="${i}">${translateMove(m)}</span>`).join('')}
         </div>
@@ -1821,7 +1834,7 @@
     stage.appendChild(cubeBox);
 
     let cubies = initCubeState();
-    scrambleWithInverse(cubies, algoStr);
+    scrambleMidSolve(cubies, algoStr);
     renderFullCube(cubeBox, cubies);
 
     const playBtn = player.querySelector('.algo-play');
@@ -1833,9 +1846,9 @@
     playBtn.addEventListener('click', async ()=>{
       playBtn.disabled = true;
       playBtn.textContent = '▶ EXECUTANDO...';
-      // Reset para o estado embaralhado
+      // Reset para o estado embaralhado (meio da resolução)
       cubies = initCubeState();
-      scrambleWithInverse(cubies, algoStr);
+      scrambleMidSolve(cubies, algoStr);
       renderFullCube(cubeBox, cubies);
       moveEls.forEach(e=>{e.classList.remove('active','done')});
 
