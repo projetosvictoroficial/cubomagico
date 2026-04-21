@@ -1364,6 +1364,22 @@
     document.querySelectorAll('.algo-player').forEach(p=>p.remove());
   }
 
+  // ============ TRADUÇÃO DE MOVIMENTOS ============
+  // Mapeia as letras internas (padrão do cubo) para as letras em português exibidas
+  const MOVE_LABEL_MAP = {R:'D', L:'E', U:'C', D:'B', F:'F', B:'A'};
+  function translateMove(token){
+    const base = token[0];
+    const rest = token.slice(1);
+    return (MOVE_LABEL_MAP[base] || base) + rest;
+  }
+  function translateAlgo(str){
+    return str.trim().split(/\s+/).map(translateMove).join(' ');
+  }
+  // Substitui o texto visível de todos os spans de algoritmo pelas letras PT
+  document.querySelectorAll('.algo[data-algo]').forEach(el=>{
+    el.textContent = translateAlgo(el.getAttribute('data-algo'));
+  });
+
   // ============ ALGO PLAYER ============
   // Estado lógico do cubo: 27 cubies, cada um com posição e orientação
   function initCubeState(){
@@ -1760,7 +1776,7 @@
       <div class="algo-player-controls">
         <div class="algo-player-label">Algoritmo · clique em reproduzir</div>
         <div class="algo-seq">
-          ${tokens.map((m,i)=>`<span class="algo-move" data-i="${i}">${m}</span>`).join('')}
+          ${tokens.map((m,i)=>`<span class="algo-move" data-i="${i}">${translateMove(m)}</span>`).join('')}
         </div>
         <div class="algo-buttons">
           <button class="algo-play">▶ REPRODUZIR</button>
