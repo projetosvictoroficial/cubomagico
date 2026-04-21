@@ -1763,6 +1763,31 @@
     playAlgorithm(algo, el);
   });
 
+  // Aplica um movimento sem animação (apenas atualiza o estado lógico)
+  function applyMoveSilent(cubies, base, prime){
+    const layerCheck = {
+      R: c=>c.pos.x===1, L: c=>c.pos.x===-1,
+      U: c=>c.pos.y===1, D: c=>c.pos.y===-1,
+      F: c=>c.pos.z===1, B: c=>c.pos.z===-1,
+    }[base];
+    cubies.filter(layerCheck).forEach(c=>rotateLayerLogic(c, base, prime));
+  }
+
+  // Embaralha o cubo aplicando o inverso do algoritmo
+  // (assim quando o algoritmo é reproduzido, ele resolve a bagunça)
+  function scrambleWithInverse(cubies, algoStr){
+    const tokens = parseAlgo(algoStr);
+    for(let i = tokens.length - 1; i >= 0; i--){
+      const subMoves = expandToken(tokens[i]);
+      for(let j = subMoves.length - 1; j >= 0; j--){
+        const sub = subMoves[j];
+        const base = sub[0];
+        const prime = !sub.includes("'"); // inverte o sentido
+        applyMoveSilent(cubies, base, prime);
+      }
+    }
+  }
+
   function playAlgorithm(algoStr, anchorEl){
     // Remove player anterior
     document.querySelectorAll('.algo-player').forEach(p=>p.remove());
@@ -1774,7 +1799,7 @@
     player.innerHTML = `
       <div class="algo-player-stage"></div>
       <div class="algo-player-controls">
-        <div class="algo-player-label">Algoritmo · clique em reproduzir</div>
+        <div class="algo-player-label">Cubo embaralhado · clique em reproduzir pra ver o algoritmo resolver</div>
         <div class="algo-seq">
           ${tokens.map((m,i)=>`<span class="algo-move" data-i="${i}">${translateMove(m)}</span>`).join('')}
         </div>
@@ -1796,6 +1821,7 @@
     stage.appendChild(cubeBox);
 
     let cubies = initCubeState();
+    scrambleWithInverse(cubies, algoStr);
     renderFullCube(cubeBox, cubies);
 
     const playBtn = player.querySelector('.algo-play');
@@ -1807,8 +1833,9 @@
     playBtn.addEventListener('click', async ()=>{
       playBtn.disabled = true;
       playBtn.textContent = '▶ EXECUTANDO...';
-      // Reset
+      // Reset para o estado embaralhado
       cubies = initCubeState();
+      scrambleWithInverse(cubies, algoStr);
       renderFullCube(cubeBox, cubies);
       moveEls.forEach(e=>{e.classList.remove('active','done')});
 
